@@ -28,5 +28,8 @@ def init():
 def create_guild_table():
     connection = get_connection()
     # ギルドテーブル guild_table
-    # guild_id: ギルドID
-    # 
+    # guild_id: サポートギルドID
+    # linked_guild_id: 紐づけギルドID
+    with connection.cursor() as cursor:
+        sql = "CREATE TABLE IF NOT EXISTS rank_system (id INT PRIMARY KEY AUTO_INCREMENT, guild_id VARCHAR(255), linked_guild_id VARCHAR(255))"
+        cursor.execute(sql)
