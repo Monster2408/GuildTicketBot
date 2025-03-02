@@ -6,6 +6,8 @@ import traceback
 import datetime
 from flaretool.holiday import JapaneseHolidays
 
+import database as DB
+
 # import logging
 # logging.basicConfig(level=logging.DEBUG)
 
@@ -46,7 +48,21 @@ class ButtonClickCog(commands.Cog):
 
     async def ticket(self, inter:discord.Interaction):
         await inter.response.defer(thinking=False, ephemeral=True)
-        
+        guild_id_list: list = DB.get_guild_id_list(inter.guild.id)
+        if len(guild_id_list) == 0:
+            await inter.followup.send("このサーバーには紐づけられたチケットサーバーがありません。", ephemeral=True)
+            return
+        for guild_id in guild_id_list:
+            guild: discord.Guild = self.bot.get_guild(int(guild_id))
+            if guild is None:
+                continue
+            roles: list = guild.fetch_roles(name="Ticket Member")
+            if len(roles) == 0:
+                continue
+            member_role: discord.Role = roles[0]
+            if member_role is None:
+                continue
+            
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(ButtonClickCog(bot))
