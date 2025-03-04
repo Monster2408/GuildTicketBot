@@ -4,7 +4,7 @@ from typing import List, AsyncIterator
 import discord
 import function as Func
 
-class PanelCommandCog(commands.Cog):
+class LinkGuildCommandCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot: commands.Bot = bot
         
@@ -14,13 +14,14 @@ class PanelCommandCog(commands.Cog):
         print(f'load command cog: {self.__class__.__name__}')
         super().__init__()  # this is now required in this context.
 
-    @app_commands.command(name="ticket", description="Ticketボタンを発行します。")
+    @app_commands.command(name="link_guild", description="サポートサーバーをリンクします。")
     @app_commands.checks.has_permissions(administrator=True)
     async def ticket(self, interaction: discord.Interaction):
-        await interaction.response.send_message("Ticketボタンを発行しています。", ephemeral=True)
+        await interaction.response.defer(thinking=True, ephemeral=True)
+        data: dict = Func.select_guild_channel(self.bot, interaction.user, "link_guild", "サポートサーバーを選択してください。")
         view: discord.ui.View = discord.ui.View()
-        view.add_item(discord.ui.Button(label="Ticket✉", style=discord.ButtonStyle.primary, custom_id="ticket"))
-        await interaction.channel.send(content="Ticketを発行する", view=view)
-
+        view.add_item(data["select_ui"])
+        await interaction.followup.send("サポートサーバーを選択してください。", view=view)
+        
 async def setup(bot: commands.Bot):
-    await bot.add_cog(PanelCommandCog(bot))
+    await bot.add_cog(LinkGuildCommandCog(bot))

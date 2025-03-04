@@ -14,15 +14,12 @@ import Var, database
 DEBUGMODE = False
 
 CMD_COGS = [
-    'cmds.panel_cmd',
-    'cmds.role_panel_cmd',
-    'cmds.rank_cmd',
+    'cmds.ticket_cmd',
+    'cmds.link_guild_cmd',
+    'cmds.set_role_cmd',
 ]
 
 EVENT_COGS = [
-    'events.message_event',
-    'events.reaction_event',
-    'events.voice_state_update_event',
     'events.button_click_event',
 ]
 

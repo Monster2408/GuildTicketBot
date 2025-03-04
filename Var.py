@@ -6,7 +6,7 @@ import yaml
 BOT_VERSION = "1.0.0"
 BOT_MODULE = "discord.py"
 
-DEBUGMODE = False
+DEBUGMODE = True
 
 # EXPの係数
 EXP_COEFFICIENT: float = 107.95
