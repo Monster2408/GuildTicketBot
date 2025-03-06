@@ -8,8 +8,9 @@ BOT_MODULE = "discord.py"
 
 DEBUGMODE = True
 
-# EXPの係数
-EXP_COEFFICIENT: float = 107.95
+# チケットメンバーのロール名
+TICKET_MEMBER_ROLE_NAME: str = "Ticket Member"
+TICKET_DICT: dict = {}
 
 # YAML 設定ファイルを読み込む関数
 def load_config(file_path):

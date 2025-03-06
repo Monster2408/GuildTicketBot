@@ -9,7 +9,8 @@ import pytz
 from japanera import EraDate
 import asyncio
 
-import Var, database
+import Var
+import database as DB
 
 DEBUGMODE = False
 
@@ -21,11 +22,12 @@ CMD_COGS = [
 
 EVENT_COGS = [
     'events.button_click_event',
+    'events.member_join_event',
 ]
 
 class MyBot(commands.Bot):
     def __init__(self, prefix: str, intents: discord.Intents):
-        database.init()
+        DB.init()
         super().__init__(command_prefix=prefix, intents=intents)
 
     async def setup_hook(self):
@@ -39,6 +41,10 @@ class MyBot(commands.Bot):
                 await self.load_extension(cog)
             except Exception:
                 traceback.print_exc()
+        try:
+            await self.load_extension("task")
+        except Exception:
+            traceback.print_exc()
         # スラッシュコマンドの同期をここで実行
         try:
             synced = await self.tree.sync(guild=None)
@@ -62,6 +68,21 @@ class MyBot(commands.Bot):
         print('-----')
         await self.wait_until_ready()
         await self.change_presence(status=discord.Status.online, activity=discord.Game("/help"))
+        guild_id_list: list = DB.get_support_guild_id_list()
+        for guild_id in guild_id_list:
+            guild: discord.Guild = self.get_guild(guild_id)
+            if guild == None:
+                continue
+            member_role: discord.Role = discord.utils.get(guild.roles, name=Var.TICKET_MEMBER_ROLE_NAME)
+            if member_role == None:
+                member_role = await guild.create_role(name=Var.TICKET_MEMBER_ROLE_NAME)
+            for member in guild.members:
+                if member_role in member.roles:
+                    continue
+                time: int = DB.get_delete_time(guild.id)
+                if time == -1:
+                    time = 60*5
+                DB.set_delete_time(guild.id, time)
 
 async def main():
     bot = MyBot(intents=discord.Intents.all(), prefix='!?')
