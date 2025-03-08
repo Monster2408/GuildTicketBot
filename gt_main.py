@@ -8,9 +8,15 @@ import traceback
 import pytz
 from japanera import EraDate
 import asyncio
+import logging
 
 import Var
 import database as DB
+
+discord.utils.setup_logging()
+
+# or, for example
+discord.utils.setup_logging(level=logging.INFO, root=False)
 
 DEBUGMODE = False
 
