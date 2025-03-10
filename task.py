@@ -8,7 +8,8 @@ import Var
 class taskCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot: commands.Bot = bot
-        self.time_check.add_exception_type(asyncpg.PostgresConnectionError)
+
+    async def cog_load(self):
         self.time_check.start()
 
     async def cog_unload(self):
@@ -16,10 +17,15 @@ class taskCog(commands.Cog):
     
     @tasks.loop(seconds=60)
     async def time_check(self):
-        for guild_id in DB.get_support_guild_id_list():
+        guild_id_list = [int(gid) for gid in DB.get_support_guild_id_list()]
+        print(f"guild_id_list: {guild_id_list}")
+        for guild_id in guild_id_list:
+            print(f"{guild_id} : {type(guild_id)}")
             guild: discord.Guild = self.bot.get_guild(guild_id)
             if guild == None:
+                print(f"guild none! guild_id: {guild_id}")
                 continue
+            print(f"guild_name: {guild.name}")
             count_ok: bool = True
             for vc in guild.voice_channels:
                 if len(vc.members) != 0:
@@ -29,6 +35,7 @@ class taskCog(commands.Cog):
             if time != -1:
                 if count_ok:
                     time -= 1
+                    print(f"time: {time}")
                     if time == 0:
                         role: discord.Role = discord.utils.get(guild.roles, name=Var.TICKET_MEMBER_ROLE_NAME)
                         if role == None:
@@ -37,7 +44,7 @@ class taskCog(commands.Cog):
                             if role in member.roles:
                                 continue
                             await member.kick(reason="チケットサーバーが空いたため退出しました。")
-                        DB.set_delete_time(guild.id, -1)
+                        DB.set_delete_time(guild.id, -999)
                     else:
                         DB.set_delete_time(guild.id, time)
                 else:

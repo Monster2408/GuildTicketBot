@@ -136,11 +136,17 @@ def get_delete_time(guild_id):
 
 def set_delete_time(guild_id, time):
     connection = get_connection()
-    with connection.cursor() as cursor:
-        sql = """
-        INSERT INTO delete_guild (guild_id, time)
-        VALUES (%s, %s)
-        ON DUPLICATE KEY UPDATE time = VALUES(time)
-        """
-        cursor.execute(sql, (guild_id, time))
+    if time == -999:
+        # テーブルから削除
+        with connection.cursor() as cursor:
+            sql = "DELETE FROM delete_guild WHERE guild_id = %s"
+            cursor.execute(sql, (guild_id,))
+    else:
+        with connection.cursor() as cursor:
+            sql = """
+            INSERT INTO delete_guild (guild_id, time)
+            VALUES (%s, %s)
+            ON DUPLICATE KEY UPDATE time = VALUES(time)
+            """
+            cursor.execute(sql, (guild_id, time))
     connection.commit()
