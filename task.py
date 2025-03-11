@@ -21,7 +21,7 @@ class taskCog(commands.Cog):
         print(f"guild_id_list: {guild_id_list}")
         for guild_id in guild_id_list:
             print(f"{guild_id} : {type(guild_id)}")
-            guild: discord.Guild = self.bot.get_guild(guild_id)
+            guild: discord.Guild = await self.bot.fetch_guild(guild_id)
             if guild == None:
                 print(f"guild none! guild_id: {guild_id}")
                 continue
@@ -41,6 +41,7 @@ class taskCog(commands.Cog):
                         if role == None:
                             role = await guild.create_role(name=Var.TICKET_MEMBER_ROLE_NAME)
                         for member in guild.members:
+                            print(member)
                             if role in member.roles:
                                 continue
                             await member.kick(reason="チケットサーバーが空いたため退出しました。")
@@ -48,7 +49,7 @@ class taskCog(commands.Cog):
                     else:
                         DB.set_delete_time(guild.id, time)
                 else:
-                    DB.set_delete_time(guild.id, 60*5)
+                    DB.set_delete_time(guild.id, 5)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(taskCog(bot))

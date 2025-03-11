@@ -85,7 +85,7 @@ class MyBot(commands.Bot):
                     continue
                 time: int = DB.get_delete_time(guild.id)
                 if time == -1:
-                    time = 60*5
+                    time = 5
                 DB.set_delete_time(guild.id, time)
 
 async def main():

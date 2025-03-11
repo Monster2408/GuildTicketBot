@@ -38,7 +38,8 @@ class MemberJoinClickCog(commands.Cog):
             if member_role == None:
                 member_role = await guild.create_role(name=Var.TICKET_MEMBER_ROLE_NAME)
             if member_role not in member.roles:
-                DB.set_delete_time(guild.id, 60*5)
+                DB.set_delete_time(guild.id, 5)
+                return
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(MemberJoinClickCog(bot))
