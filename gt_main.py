@@ -80,7 +80,7 @@ class MyBot(commands.Bot):
             member_role: discord.Role = discord.utils.get(guild.roles, name=Var.TICKET_MEMBER_ROLE_NAME)
             if member_role == None:
                 member_role = await guild.create_role(name=Var.TICKET_MEMBER_ROLE_NAME)
-            for member in guild.members:
+            async for member in guild.fetch_members(limit=None):
                 if member_role in member.roles:
                     continue
                 time: int = DB.get_delete_time(guild.id)
