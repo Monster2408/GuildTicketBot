@@ -21,6 +21,7 @@ class UnlinkGuildCommandCog(commands.Cog):
     async def unlink_guild(self, interaction: discord.Interaction):
         try:
             await interaction.response.defer(thinking=True, ephemeral=True)
+            # TODO: 登録済みの鯖のみ表示したい
             data: dict = Func.select_guild_channel(self.bot, interaction, "unlink_guild", "サポートサーバーを選択してください。", 1, 25)
             view: discord.ui.View = discord.ui.View()
             view.add_item(data["select_ui"])
