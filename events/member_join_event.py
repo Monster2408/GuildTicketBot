@@ -36,7 +36,10 @@ class MemberJoinClickCog(commands.Cog):
                 continue
             member_role: discord.Role = discord.utils.get(guild.roles, name=Var.TICKET_MEMBER_ROLE_NAME)
             if member_role == None:
-                member_role = await guild.create_role(name=Var.TICKET_MEMBER_ROLE_NAME)
+                member_role: discord.Role = await Func.create_role(guild)
+                if member_role is None:
+                    print(f"member_role none! guild_id: {guild_id}")
+                    continue
             if member_role not in member.roles:
                 DB.set_delete_time(guild.id, 5)
                 return

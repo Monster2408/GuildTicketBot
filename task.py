@@ -3,7 +3,7 @@ import discord
 import traceback
 
 import database as DB
-import Var
+import function as Func
 
 class taskCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -18,6 +18,9 @@ class taskCog(commands.Cog):
     @tasks.loop(seconds=60)
     async def time_check(self):
         guild_id_list = [int(gid) for gid in DB.get_support_guild_id_list()]
+        print("==========")
+        print(guild_id_list)
+        print("==========")
         for guild_id in guild_id_list:
             print(f"{guild_id} : {type(guild_id)}")
             guild: discord.Guild = await self.bot.fetch_guild(guild_id)
@@ -25,11 +28,12 @@ class taskCog(commands.Cog):
                 print(f"guild none! guild_id: {guild_id}")
                 continue
             count_ok: bool = True
-            role: discord.Role = discord.utils.get(guild.roles, name=Var.TICKET_MEMBER_ROLE_NAME)
-            if role == None:
-                role = await guild.create_role(name=Var.TICKET_MEMBER_ROLE_NAME)
+            member_role: discord.Role = await Func.create_role(guild)
+            if member_role is None:
+                print(f"member_role none! guild_id: {guild_id}")
+                continue
             async for member in guild.fetch_members(limit=None):
-                if role in member.roles:
+                if member_role in member.roles:
                     continue
                 print(f"{member.name} : {member.voice}")
                 if member.voice == None:
@@ -43,7 +47,7 @@ class taskCog(commands.Cog):
                     time -= 1
                     if time == 0:
                         async for member in guild.fetch_members(limit=None):
-                            if role in member.roles:
+                            if member_role in member.roles:
                                 continue
                             await member.kick(reason="チケットサーバーが空いたため退出しました。")
                         DB.set_delete_time(guild.id, -999)

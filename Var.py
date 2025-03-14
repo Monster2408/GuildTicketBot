@@ -9,7 +9,7 @@ BOT_MODULE = "discord.py"
 DEBUGMODE = True
 
 # チケットメンバーのロール名
-TICKET_MEMBER_ROLE_NAME: str = "Ticket Member"
+TICKET_MEMBER_ROLE_NAME: str = "Ticket Member0"
 TICKET_DICT: dict = {}
 
 # YAML 設定ファイルを読み込む関数

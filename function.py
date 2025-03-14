@@ -2,12 +2,26 @@ import discord
 from discord.ext import commands
 import traceback
 
+import Var
+import database as DB
+
 def select_guild_channel(bot: commands.Bot, inter: discord.Interaction, select_ui_id: str, placeholder: str, page: int = 1, multi_select: int = 1) -> dict:
     try:
         guild_list: list[discord.Guild] = []
+        guild_id_list: list = DB.get_guild_id_list(inter.guild.id)
+        print(guild_id_list)
         for guild in bot.guilds:
             if guild.get_member(inter.user.id) is not None and inter.guild != guild:
-                guild_list.append(guild)
+                if select_ui_id == "link_guild":
+                    if guild.id not in guild_id_list:
+                        print(f"if guild.id not in guild_id_list: {guild.name}")
+                        guild_list.append(guild)
+                elif select_ui_id == "unlink_guild":
+                    if guild.id in guild_id_list:
+                        print(f"if guild.id in guild_id_list: {guild.name}")
+                        guild_list.append(guild)
+                else:
+                    guild_list.append(guild)
         total_guilds = len(guild_list)
         if multi_select < 1:
             multi_select = 1
@@ -43,3 +57,11 @@ def select_guild_channel(bot: commands.Bot, inter: discord.Interaction, select_u
     except Exception:
         traceback.print_exc()
         return {"select_ui": None, "page": 1, "last_page": 1}
+
+async def create_role(guild: discord.Guild) -> discord.Role:
+    role: discord.Role = discord.utils.get(guild.roles, name=Var.TICKET_MEMBER_ROLE_NAME)
+    if role == None:
+        role = await guild.create_role(name=Var.TICKET_MEMBER_ROLE_NAME)
+    roles = guild.roles  # 全ロール取得
+    await role.edit(position=roles[-2].position)  # 一番下のロールの位置に設定
+    return role

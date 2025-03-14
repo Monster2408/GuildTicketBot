@@ -88,6 +88,11 @@ def link_guild(guild_id, linked_guild_id):
     connection.commit()
 
 def get_support_guild_id_list() -> list:
+    """サポート鯖のリスト(ID)を取得する
+
+    Returns:
+        list: サポート鯖のリスト(ID)
+    """
     connection = get_connection()
     with connection.cursor() as cursor:
         sql = "SELECT guild_id FROM guild_ticket"

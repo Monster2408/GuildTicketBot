@@ -85,13 +85,18 @@ class ButtonClickCog(commands.Cog):
             if len(guild_id_list) == 0:
                 await inter.followup.send("このサーバーには紐づけられたチケットサーバーがありません。", ephemeral=True)
                 return
+            print("==================")
+            print(guild_id_list)
+            print("==================")
             for guild_id in guild_id_list:
                 guild: discord.Guild = self.bot.get_guild(int(guild_id))
                 if guild is None:
+                    print(f"guild none! guild_id: {guild_id}")
                     continue
-                member_role: discord.Role = discord.utils.get(guild.roles, name=Var.TICKET_MEMBER_ROLE_NAME)
-                if member_role == None:
-                    member_role = await guild.create_role(name=Var.TICKET_MEMBER_ROLE_NAME)
+                member_role: discord.Role = await Func.create_role(guild)
+                if member_role is None:
+                    print(f"member_role none! guild_id: {guild_id}")
+                    continue
                 active_server: bool = False
                 for member in guild.members:
                     if member.id == inter.user.id:
@@ -116,16 +121,15 @@ class ButtonClickCog(commands.Cog):
                         break
                 if final_invite_url:
                     await inter.followup.send(f"{guild.name}に招待します。\n{final_invite_url}", ephemeral=True)
-                    break
+                    return
                 if active_server:
                     print(f"active server: {guild.name}")
                     continue
                 invite: discord.Invite = await guild.text_channels[0].create_invite(max_uses=1, max_age=60*5)
                 DB.update_invite_url(inter.user.id, guild.id, inter.guild.id, invite.url)
                 await inter.followup.send(f"{guild.name}に招待します。\n{invite.url}", ephemeral=True)
-                break
-            else:
-                await inter.followup.send("このサーバーにはチケットサーバーがありません。", ephemeral=True)
+                return
+            await inter.followup.send("このサーバーにはチケットサーバーがありません。", ephemeral=True)
         except Exception:
             traceback.print_exc()
             
