@@ -85,9 +85,6 @@ class ButtonClickCog(commands.Cog):
             if len(guild_id_list) == 0:
                 await inter.followup.send("このサーバーには紐づけられたチケットサーバーがありません。", ephemeral=True)
                 return
-            print("==================")
-            print(guild_id_list)
-            print("==================")
             for guild_id in guild_id_list:
                 guild: discord.Guild = self.bot.get_guild(int(guild_id))
                 if guild is None:

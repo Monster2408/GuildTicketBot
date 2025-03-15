@@ -21,6 +21,7 @@ DEBUGMODE = False
 CMD_COGS = [
     'cmds.ticket_cmd',
     'cmds.link_guild_cmd',
+    'cmds.unlink_guild_cmd',
     'cmds.set_role_cmd',
 ]
 

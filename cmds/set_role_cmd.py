@@ -22,9 +22,10 @@ class SetRoleCommandCog(commands.Cog):
     async def ticket(self, interaction: discord.Interaction):
         try:
             await interaction.response.defer(thinking=True, ephemeral=True)
-            member_role: discord.Role = discord.utils.get(interaction.guild.roles, name="Ticket Member")
-            if member_role == None:
-                member_role = await interaction.guild.create_role(name="Ticket Member")
+            member_role: discord.Role = await Func.create_role(interaction.guild)
+            if member_role is None:
+                print(f"member_role none! guild_id: {interaction.guild.id}")
+                return
             for member in interaction.guild.members:
                 if member_role in member.roles:
                     continue

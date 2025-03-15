@@ -13,11 +13,11 @@ def select_guild_channel(bot: commands.Bot, inter: discord.Interaction, select_u
         for guild in bot.guilds:
             if guild.get_member(inter.user.id) is not None and inter.guild != guild:
                 if select_ui_id == "link_guild":
-                    if guild.id not in guild_id_list:
+                    if str(guild.id) not in guild_id_list:
                         print(f"if guild.id not in guild_id_list: {guild.name}")
                         guild_list.append(guild)
                 elif select_ui_id == "unlink_guild":
-                    if guild.id in guild_id_list:
+                    if str(guild.id) in guild_id_list:
                         print(f"if guild.id in guild_id_list: {guild.name}")
                         guild_list.append(guild)
                 else:
@@ -30,8 +30,6 @@ def select_guild_channel(bot: commands.Bot, inter: discord.Interaction, select_u
         
         if multi_select > total_guilds:
             multi_select = total_guilds
-        
-        print(f"total_guilds: {total_guilds}")
 
         # 1ページあたりの項目数
         items_per_page = 25
