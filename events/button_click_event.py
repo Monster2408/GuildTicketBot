@@ -103,6 +103,9 @@ class ButtonClickCog(commands.Cog):
                         print(f"has not role: {member.name}")
                         active_server = True
                         break
+                if active_server:
+                    print(f"active server: {guild.name}")
+                    continue
                 invite_url = DB.get_invite_url(inter.user.id, guild.id)
                 final_invite_url = None
                 for invite in await guild.invites():
